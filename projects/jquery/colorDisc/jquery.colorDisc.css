@@ -1,6 +1,5 @@
 #colorDisc{
     display: inline-block;
-    z-index: -1;
     -webkit-transition-property: -webkit-transform;
     -webkit-animation-duration: 1s;
     -moz-transition-property: -moz-transform;
