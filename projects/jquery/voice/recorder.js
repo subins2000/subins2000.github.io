@@ -1,7 +1,11 @@
 (function(window){
 
-  var WORKER_PATH = 'cdn/recorderWorker.js';
-  var encoderWorker = new Worker('cdn/mp3Worker.js');
+  /**
+   * These URLs can't be used, so download these files from the URL, store locally and then
+   * change the values `workerPath` and `mp3WorkerPath` in jquery.voice.js
+   */
+  var WORKER_PATH = 'http://lab.subinsb.com/projects/jquery/voice/recorderWorker.js';
+  var mp3WorkerPath = 'http://lab.subinsb.com/projects/jquery/voice/mp3Worker.js';
 
   var Recorder = function(source, cfg){
     var config = cfg || {};
@@ -11,6 +15,7 @@
                  this.context.createJavaScriptNode).call(this.context,
                                                          bufferLen, 2, 2);
     var worker = new Worker(config.workerPath || WORKER_PATH);
+    
     worker.postMessage({
       command: 'init',
       config: {
@@ -74,6 +79,8 @@
       // MP3 conversion
       this.exportWAV(function(){});
       currCallback = cb || config.callback;
+      
+      var encoderWorker = new Worker(config.mp3WorkerPath || mp3WorkerPath);
       worker.onmessage = function(e){
         var blob = e.data;
 
