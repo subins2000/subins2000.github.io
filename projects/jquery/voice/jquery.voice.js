@@ -14,7 +14,7 @@
  * Full Documentation & Support - http://subinsb.com/html5-record-mic-voice
 */
 
-window.Fr = {};
+window.Fr = typeof Fr == "undefined" ? {} : window.Fr;
 (function($){
 	Fr.voice = {
     workerPath: "cdn/recorderWorker.js",
