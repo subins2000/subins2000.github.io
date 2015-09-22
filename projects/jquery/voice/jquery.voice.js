@@ -1,24 +1,24 @@
 /**
- * jQuery Voice plugin 0.3 (31st May 2015)
+ * Francium Voice plugin 0.3 (22 Sep 2015)
  * Copyright Subin Siby - http://subinsb.com
  * 
  * ------------------
  * Licensed under MIT
  * ------------------
  * 
- * A jQuery plugin to record, play & download microphone input sound from the user.
+ * A JavaScript plugin to record, play & download microphone input sound from the user.
  * NEEDS recorder.js and recorderWorker.js to work - https://github.com/mattdiamond/Recorderjs
  * 
- * To use MP3 conversion, NEEDS mp3Worker.js, libmp3lame.min.js and recorder.js from https://github.com/nusofthq/Recordmp3js/tree/master/js
+ * To use MP3 conversion, NEEDS mp3Worker.js, libmp3lame.min.js and recorderWorker.js from https://github.com/nusofthq/Recordmp3js/tree/master/js
  *
  * Full Documentation & Support - http://subinsb.com/html5-record-mic-voice
 */
 
-window.Fr = typeof Fr == "undefined" ? {} : window.Fr;
-(function($){
+(function(window){
+  window.Fr = window.Fr || {};
 	Fr.voice = {
-    workerPath: "cdn/recorderWorker.js",
-    mp3WorkerPath: "cdn/mp3Worker.js",
+    workerPath: "js/recorderWorker.js",
+    mp3WorkerPath: "js/mp3Worker.js",
     stream: false,
     
     init_called: false,
@@ -45,7 +45,8 @@ window.Fr = typeof Fr == "undefined" ? {} : window.Fr;
      * Start recording audio
      */
     record: function(output, callback){
-    	if(this.init_called === false){
+    	callback = callback || function(){};
+      if(this.init_called === false){
     		this.init();
     		this.init_called = true;
     	}
@@ -73,7 +74,9 @@ window.Fr = typeof Fr == "undefined" ? {} : window.Fr;
     stop: function(){
     	this.recorder.stop();
     	this.recorder.clear();
-    	this.stream.stop();
+    	this.stream.getTracks().forEach(function (track) {
+        track.stop();
+      });
     	return this;
     },
     
@@ -103,4 +106,4 @@ window.Fr = typeof Fr == "undefined" ? {} : window.Fr;
       }
     }
   };
-})(jQuery);
+})(window);
