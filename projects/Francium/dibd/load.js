@@ -1,18 +1,28 @@
 /**
  * Francium Disqus In Blogger Dynamic Views (DIBD) Plugin by Subin Siby [http://goo.gl/jPb8TR]
- * 2015-09-24
+ * 2016-02-05
  */
 (function(window){
   window.Fr = window.Fr || {};
   Fr.url = "", Fr.identifier = "";
   window.disqus_url = Fr.url;
   
+  if(location.hash.match("#comment") !== null){
+    Fr.commentHash = location.hash;
+  }
+  
   Fr.loadDisqus = function(){
+    if(typeof Fr.commentHash != "undefined" && $('#disqus_thread').height() < 52){
+      window.location.hash = Fr.commentHash;
+    }
     if($("#disqus_thread.subinsblogdisqus").length == 0 && $('.article-footer .share-controls').length != 0 && Fr.url != location.href){
       console.log("DIBD (Disqus In Blogger Dynamic views) : http://goo.gl/jPb8TR http://subinsb.com/how-to-integrate-disqus-into-blogger-dynamic-views");
       $('.article-footer .share-controls').after('<'+'div id="disqus_thread" class="subinsblogdisqus"><'+'/div><'+'a href="http://goo.gl/jPb8TR">Disqus for Blogger Dynamic views<'+'/a>');
-      Fr.url = $(".article .title.entry-title:first a[href]").attr("href");
-      Fr.url = Fr.url == "" || typeof Fr.url == "undefined" ? window.location.href : Fr.url;
+      if(typeof Fr.commentHash == "undefined"){
+        Fr.url = $(".article .title.entry-title:first a[href]").attr("href");
+        Fr.url = Fr.url == "" || typeof Fr.url == "undefined" ? window.location.href : Fr.url;
+      }
+      
       a = document.createElement('a'), a.href = Fr.url, Fr.identifier = a.pathname;
       
       window.disqus_url = Fr.url, window.disqus_identifier = Fr.identifier;
