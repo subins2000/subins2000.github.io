@@ -1,25 +1,44 @@
 /**
- * Francium Voice plugin 0.4 (23 Dec 2015)
- * Copyright Subin Siby - http://subinsb.com
- * 
- * ---------------------
- * Licensed under Apache
- * ---------------------
- * 
- * A JavaScript plugin to record, play & download microphone input sound from the user.
- * NEEDS recorder.js and recorderWorker.js to work - https://github.com/mattdiamond/Recorderjs
- * 
- * To use MP3 conversion, NEEDS mp3Worker.js, libmp3lame.min.js and recorderWorker.js from https://github.com/nusofthq/Recordmp3js/tree/master/js
- *
- * Full Documentation & Support - http://subinsb.com/html5-record-mic-voice
+.---------------------------------------------------------------------------.
+| The Francium Project                                                      |
+| ------------------------------------------------------------------------- |
+| This software "voice" is a part of the Francium (Fr) project.             |
+| http://subinsb.com/the-francium-project                                   |
+| ------------------------------------------------------------------------- |
+|    Author: Subin Siby                                                     |
+| Copyright (c) 2014 - 2015, Subin Siby. All Rights Reserved.               |
+| ------------------------------------------------------------------------- |
+|   License: Distributed under the Apache License, Version 2.0              |
+|            http://www.apache.org/licenses/LICENSE-2.0                     |
+| This program is distributed in the hope that it will be useful - WITHOUT  |
+| ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or     |
+| FITNESS FOR A PARTICULAR PURPOSE.                                         |
+'---------------------------------------------------------------------------'
+*/
+
+/**
+.---------------------------------------------------------------------------.
+|  Software:      Francium Voice                                            |
+|  Version:       0.5 (Last Updated on 2016 July 16)                        |
+|  Documentation: http://subinsb.com/html5-record-mic-voice                 |
+|  Contribute:    https://github.com/subins2000/Francium-voice              |
+'---------------------------------------------------------------------------'
 */
 
 (function(window){
   window.Fr = window.Fr || {};
 	Fr.voice = {
-    workerPath: "js/recorderWorker.js",
-    mp3WorkerPath: "js/mp3Worker.js",
+    
+    /**
+     * Path to mp3Worker.js
+     * Only needed if you're gonna use MP3 conversion
+     * You should also include libmp3lame.min.js
+     * You can get both files from https://github.com/subins2000/Francium-voice/blob/master/js/
+     */
+    mp3WorkerPath: "src/mp3Worker.js",
+    
     stream: false,
+    input: false,
     
     init_called: false,
     
@@ -44,25 +63,34 @@
     /**
      * Start recording audio
      */
-    record: function(output, callback){
-    	callback = callback || function(){};
+    record: function(output, finishCallback, recordingCallback){
+    	var finishCallback = finishCallback || function(){};
+      var recordingCallback = recordingCallback || function(){};
+      
       if(this.init_called === false){
     		this.init();
     		this.init_called = true;
     	}
-      $that = this;
+      
+      var $that = this;
     	navigator.getUserMedia({audio: true}, function(stream){
-    		var input = $that.context.createMediaStreamSource(stream);
+    		
+        /**
+         * Live Output
+         */
+        $that.input = $that.context.createMediaStreamSource(stream);
     		if(output === true){
-          input.connect($that.context.destination);
+          $that.input.connect($that.context.destination);
     		}
-    		$that.recorder = new Recorder(input, {
-          workerPath : $that.workerPath,
-          mp3WorkerPath : $that.mp3WorkerPath
+        
+    		$that.recorder = new Recorder($that.input, {
+          'mp3WorkerPath': $that.mp3WorkerPath,
+          'recordingCallback': recordingCallback
     		});
+        
     		$that.stream = stream;
     		$that.recorder.record();
-    		callback(stream);
+    		finishCallback(stream);
     	}, function() {
     		alert('No live audio input');
     	});
@@ -81,10 +109,10 @@
      */
     stop: function(){
     	this.recorder.stop();
-    	//this.recorder.clear();
-    	/*this.stream.getTracks().forEach(function (track) {
+    	this.recorder.clear();
+    	this.stream.getTracks().forEach(function (track) {
         track.stop();
-      });*/
+      });
     	return this;
     },
     
