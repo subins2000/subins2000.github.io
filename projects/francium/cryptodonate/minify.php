@@ -2,6 +2,15 @@
 $baseDir = __DIR__;
 
 /**
+ * Check if server is up
+ */
+
+if (strlen(file_get_contents('https://javascript-minifier.com')) < 400) {
+    echo 'Site is down';
+    exit;
+}
+
+/**
  * Minify JS
  */
 function minJS($input, $output)
@@ -37,9 +46,13 @@ PLAIN;
     file_put_contents($output, $minifiedJS);
 }
 
-minJS($baseDir . '/cryptodonate.js', $baseDir . '/cryptodonate.js');
+$jsFiles = array('cryptodonate.js', 'widget.js');
 
-echo 'Compressed JS' . PHP_EOL;
+foreach ($jsFiles as $jsFile) {
+    minJS($baseDir . '/' . $jsFile, $baseDir . '/' . $jsFile);
+
+    echo 'Compressed JS - ' . $jsFile . PHP_EOL;
+}
 
 /**
  * Minify CSS
@@ -63,6 +76,21 @@ function minCSS($input, $output)
     curl_close($ch);
 
     $minifiedCSS = $minified;
+
+    if (!preg_match('/Copyright/', $minifiedCSS)) {
+        /**
+         * Add license at beginning
+         */
+        $licenseHeader = <<<PLAIN
+/*!
+ * CryptoDonate <https://subinsb.com/cryptodonate>
+ * Copyright Subin Siby
+ * Released under the MIT license <https://goo.gl/aPHGJm>
+ */
+PLAIN;
+
+        $minifiedCSS = $licenseHeader . PHP_EOL . $minified;
+    }
 
     file_put_contents($output, $minifiedCSS);
 }
