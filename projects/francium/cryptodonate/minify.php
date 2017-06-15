@@ -62,18 +62,7 @@ function minCSS($input, $output)
 
     curl_close($ch);
 
-    /**
-     * Add license at beginning
-     */
-    $licenseHeader = <<<PLAIN
-/*!
- * CryptoDonate <https://subinsb.com/cryptodonate>
- * Copyright Subin Siby
- * Released under the MIT license <https://goo.gl/aPHGJm>
- */
-PLAIN;
-
-    $minifiedCSS = $licenseHeader . PHP_EOL . $minified;
+    $minifiedCSS = $minified;
 
     file_put_contents($output, $minifiedCSS);
 }
