@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: 'Ubuntu', sans-serif;
+      text-align: center;
+      color: #fff;
+      background: linear-gradient(
+        135deg, #ff758c, #ff7eb3, #c471ed
+      );
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+      padding: 35px 20px;
+      border: 1px solid #ffffff70;
+      border-radius: 28px;
+      background: #ffffff20;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 15px 50px #7b174b40;
+      z-index: 2;
+    }
+
+    .heart {
+      font-size: 65px;
+      animation: beat 1s infinite;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 7vw, 3rem);
+      margin: 15px 0;
+      text-shadow: 0 3px 15px #8a174a50;
+    }
+
+    #subtitle {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    #countdown {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .box {
+      min-width: 75px;
+      padding: 16px 10px;
+      border-radius: 16px;
+      background: #ffffff30;
+      border: 1px solid #ffffff60;
+      box-shadow: 0 5px 15px #8a174a20;
+    }
+
+    .number {
+      font-family: Arial, sans-serif;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .label {
+      margin-top: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    #message {
+      font-size: 1.2rem;
+      margin-top: 28px;
+      line-height: 1.6;
+    }
+
+    .floating-heart {
+      position: absolute;
+      bottom: -50px;
+      font-size: 24px;
+      opacity: 0.7;
+      animation: floatUp linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      15% { opacity: 0.7; }
+      to {
+        transform: translateY(-115vh) rotate(35deg);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .box {
+        min-width: 65px;
+        padding: 12px 8px;
+      }
+
+      .number {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    let meow;
+
+    if (!params.has("meow")) {
+      document.documentElement.style.display = "none";
+    } else {
+      try {
+        meow = atob(params.get("meow"));
+        console.log(meow);
+      } catch (error) {
+        document.documentElement.style.display = "none";
+      }
+    }
+  </script>
+  <div class="container">
+    <div class="heart">💗</div>
+
+    <p id="subtitle"></p>
+
+    <div id="countdown">
+      <div class="box">
+        <div class="number" id="days">00</div>
+        <div class="label">Days</div>
+      </div>
+
+      <div class="box">
+        <div class="number" id="hours">00</div>
+        <div class="label">Hours</div>
+      </div>
+
+      <div class="box">
+        <div class="number" id="minutes">00</div>
+        <div class="label">Minutes</div>
+      </div>
+
+      <div class="box">
+        <div class="number" id="seconds">00</div>
+        <div class="label">Seconds</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("subtitle").innerText = `time left to meet ${meow}`;
+    document.title = `i love you ${meow} 💖💕`
+
+    const targetDate =
+      new Date("2026-11-03T21:00:00").getTime();
+
+    function updateCountdown() {
+      const distance = targetDate - Date.now();
+
+      document.getElementById("days").textContent =
+        Math.floor(distance / 86400000);
+
+      document.getElementById("hours").textContent =
+        Math.floor((distance / 3600000) % 24);
+
+      document.getElementById("minutes").textContent =
+        Math.floor((distance / 60000) % 60);
+
+      document.getElementById("seconds").textContent =
+        Math.floor((distance / 1000) % 60);
+    }
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.className = "floating-heart";
+      heart.textContent = ["❤️", "💕", "💗", "💖", "💘"][
+        Math.floor(Math.random() * 5)
+      ];
+
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.animationDuration =
+        (5 + Math.random() * 6) + "s";
+      heart.style.fontSize =
+        (16 + Math.random() * 24) + "px";
+
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 11000);
+    }
+
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+    setInterval(createHeart, 500);
+  </script>
+</body>
+</html>
